@@ -11,7 +11,8 @@
 	</parent>
 	<groupId>com.mycompany</groupId>
 	<artifactId>chat-app-backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1</version>
+	<packaging>jar</packaging>
 	<name>chat-app-backend</name>
 	<description>Chat-App Rest backend</description>
 	<properties>
