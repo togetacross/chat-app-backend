@@ -1,0 +1,1 @@
+web: env DATABASE_URL=$JDBC_DATABASE_URL env JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom" target/chat-app-backend-0.0.1.jar
