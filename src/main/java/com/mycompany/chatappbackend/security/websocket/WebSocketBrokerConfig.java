@@ -41,7 +41,7 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
 		registry
 		.setErrorHandler(customStompSubProtocolErrorHandler)
 		.addEndpoint("/ws-chat")
-		.setAllowedOrigins("http://localhost:3000")
+		.setAllowedOrigins("*")
 		.withSockJS();
 	}
 
