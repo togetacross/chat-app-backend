@@ -26,7 +26,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 	Optional<ChatRoom> findGroupChatRoomByIdWithProfile(@Param("chatroomId") Integer chatroomId);
 	
 	@Query("SELECT new com.mycompany.chatappbackend.model.dto.ChatRoom.DisplayChatRoomDTO("
-			+ "c.id as id , "
+			+ "u.key.chatRoomId as id, "
 			+ "CASE WHEN p.user.id =: userId THEN up.name ELSE p.name END, "
 			+ "CASE WHEN p.user.id =: userId THEN up.image ELSE p.image END, "
 			+ "c.type, "
