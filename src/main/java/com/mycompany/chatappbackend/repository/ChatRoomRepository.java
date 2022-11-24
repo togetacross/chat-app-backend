@@ -26,7 +26,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 	Optional<ChatRoom> findGroupChatRoomByIdWithProfile(@Param("chatroomId") Integer chatroomId);
 	
 	@Query("SELECT new com.mycompany.chatappbackend.model.dto.ChatRoom.DisplayChatRoomDTO("
-			+ "c.id, "
+			+ "c.id as id , "
 			+ "CASE WHEN p.user.id =: userId THEN up.name ELSE p.name END, "
 			+ "CASE WHEN p.user.id =: userId THEN up.image ELSE p.image END, "
 			+ "c.type, "
@@ -37,7 +37,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 			+ "LEFT JOIN p.recieverUserProfile up "
 			+ "LEFT JOIN c.messages AS m "
 			+ "WHERE u.key.userId = :userId AND u.role <> 'NONE' AND (p.user.id IS NULL OR p.user.id =: userId)"
-			+ "GROUP BY c.id "
+			+ "GROUP BY id "
 			+ "ORDER BY lastMessage DESC")
 	List<DisplayChatRoomDTO> findByUserId(@Param("userId") Integer id);
 
