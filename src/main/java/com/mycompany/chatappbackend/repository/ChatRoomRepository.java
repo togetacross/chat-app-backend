@@ -38,9 +38,9 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 			+ "LEFT JOIN c.conversationProfile p "
 			+ "LEFT JOIN p.recieverUserProfile up "
 			//+ "LEFT JOIN c.messages AS m "
-			+ "WHERE u.key.userId = :userId AND u.role <> 'NONE' AND (p.user.id IS NULL OR p.user.id =: userId) "
+			+ "WHERE u.key.userId = :userId AND u.role <> 'NONE' AND (p.user.id IS NULL OR p.user.id =: userId)")
 			//+ "GROUP BY chatRoomId "
-			+ "ORDER BY lastMessage DESC")
+			//+ "ORDER BY lastMessage DESC")
 	List<DisplayChatRoomDTO> findByUserId(@Param("userId") Integer id);
 
 }
