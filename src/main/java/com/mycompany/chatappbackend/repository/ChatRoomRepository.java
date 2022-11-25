@@ -32,7 +32,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 			+ "c.type, "
 			//+ "CASE WHEN COUNT(m) > 0 THEN MAX(m.createdAt) ELSE c.createdAt END as lastMessage) "
 			//+ "MAX(m.createdAt) as lastMessage) "
-			+ "m.createdAt as lastMessage) "
+			+ "c.createdAt as lastMessage) "
 			+ "FROM ChatRoomUser u "
 			+ "LEFT JOIN u.chatRoom c "
 			+ "LEFT JOIN c.conversationProfile p "
