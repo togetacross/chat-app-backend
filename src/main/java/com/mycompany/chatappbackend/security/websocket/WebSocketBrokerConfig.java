@@ -42,6 +42,7 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
 		.setErrorHandler(customStompSubProtocolErrorHandler)
 		.addEndpoint("/ws-chat")
 		.setAllowedOrigins("https://chat-app-frontend-ten.vercel.app")
+		//.setAllowedOrigins("http://localhost:3000")
 		
 		.withSockJS();
 	}

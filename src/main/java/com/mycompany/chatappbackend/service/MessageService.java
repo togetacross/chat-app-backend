@@ -68,12 +68,7 @@ public class MessageService {
 	
 	@Transactional
 	public DisplayMessageDTO saveMessage(MultipartFile[] files, MessageDTO messageDTO, Integer userId) {
-		ChatRoomUser chatRoomUser = chatRoomUserService.getChatRoomUserById(userId, messageDTO.getChatRoomId()).orElseThrow();	
-		
-		if(chatRoomUser.getKey().getUserId() == userId) {
-			chatRoomUser.setNewMesssageAt(messageDTO.getDateTime());			
-		}
-		
+		ChatRoomUser chatRoomUser = chatRoomUserService.getChatRoomUserById(userId, messageDTO.getChatRoomId()).orElseThrow();
 		Message message = new Message();
 		message.setCreatedAt(messageDTO.getDateTime());
 		message.setChatRoomUser(chatRoomUser);
@@ -104,7 +99,6 @@ public class MessageService {
 		}	
 		message.setMessageContent(messageContent);
 		Message savedMessage = messageRepository.save(message);
-		chatRoomUserService.saveChatRoomUser(chatRoomUser);
 		return createDisplayMessageDTO(savedMessage);
 	}
 

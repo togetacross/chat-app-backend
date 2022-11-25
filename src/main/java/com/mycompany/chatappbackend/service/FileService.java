@@ -63,7 +63,7 @@ public class FileService {
 	}
 	
 	public byte[] getFileInByteArray(String name, String subPath) throws IOException {
-		String encodedImageName = encodeToUrl(name);
+		String encodedImageName = encodeToUrl(name != null ? name : "");
 		return Files.readAllBytes(Paths.get(filesStorage + "/" + subPath + "/" + encodedImageName));		
 	}
 	

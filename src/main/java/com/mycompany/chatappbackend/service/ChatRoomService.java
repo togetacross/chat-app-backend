@@ -179,13 +179,14 @@ public class ChatRoomService {
 		return new InitConversationDTO(chatroomUsersDto, messageSliceDTO);
 	}
 	
+	@Transactional
 	public void processNewMessage(MultipartFile[] files, MessageDTO messageDTO, Integer userId) {
 		DisplayMessageDTO displayMessageDTO = messageService.saveMessage(files, messageDTO, userId);
+		chatRoomRepository.updateChatRoomLastActivity(messageDTO.getDateTime(), messageDTO.getChatRoomId());
 		List<Integer> conversationUserIds = chatRoomUserService.loadActiveChatRoomUserIds(messageDTO.getChatRoomId());
 		conversationUserIds.forEach(id -> notificationService.sendToUser(id.toString(), new NotificationResponse(displayMessageDTO, NotificationType.MESSAGE)));
 	}
 
-	
 	/*
 	@Autowired
 	private FileService fileService;
