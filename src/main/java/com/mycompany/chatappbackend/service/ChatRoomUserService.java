@@ -23,6 +23,10 @@ public class ChatRoomUserService {
 	@Autowired
 	private SocketRegsitryService socketRegsitryService;
 	
+	public void saveChatRoomUser(ChatRoomUser chatRoomUser) {
+		chatRoomUserRepository.save(chatRoomUser);
+	}
+	
 	public ChatRoomUser getReferenceById(Integer userId, Integer chatRoomId) {
 		return chatRoomUserRepository.getReferenceById(new ChatRoomUserPK(userId, chatRoomId));
 	}

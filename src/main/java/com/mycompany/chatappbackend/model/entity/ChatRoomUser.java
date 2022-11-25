@@ -1,5 +1,6 @@
 package com.mycompany.chatappbackend.model.entity;
 
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -44,6 +45,9 @@ public class ChatRoomUser {
 	@MapsId("chatRoomId")
 	@JoinColumn(name = "chatroom_id", insertable = false, updatable = false)
 	private ChatRoom chatRoom;
+	
+	@Column(name = "new_message_at")
+	private OffsetDateTime newMesssageAt;
 
 	@OneToMany(mappedBy = "chatRoomUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Message> messages = new HashSet<>();

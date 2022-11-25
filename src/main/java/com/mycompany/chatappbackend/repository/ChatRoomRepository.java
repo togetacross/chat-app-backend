@@ -31,16 +31,17 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 			+ "CASE WHEN p.user.id =: userId THEN up.image ELSE p.image END, "
 			+ "c.type, "
 			//+ "CASE WHEN COUNT(m) > 0 THEN MAX(m.createdAt) ELSE c.createdAt END as lastMessage) "
+			+ "CASE WHEN u.newMessageAt IS NOT NULL THEN u.newMessageAt ELSE c.createdAt END as lastMessage) "
 			//+ "MAX(m.createdAt) as lastMessage) "
-			+ "c.createdAt as lastMessage) "
+			//+ "c.createdAt as lastMessage) "
 			+ "FROM ChatRoomUser u "
 			+ "LEFT JOIN u.chatRoom c "
 			+ "LEFT JOIN c.conversationProfile p "
 			+ "LEFT JOIN p.recieverUserProfile up "
 			//+ "LEFT JOIN c.messages AS m "
-			+ "WHERE u.key.userId = :userId AND u.role <> 'NONE' AND (p.user.id IS NULL OR p.user.id =: userId)")
+			+ "WHERE u.key.userId = :userId AND u.role <> 'NONE' AND (p.user.id IS NULL OR p.user.id =: userId) "
 			//+ "GROUP BY chatRoomId "
-			//+ "ORDER BY lastMessage DESC")
+			+ "ORDER BY lastMessage DESC")
 	List<DisplayChatRoomDTO> findByUserId(@Param("userId") Integer id);
 
 }
