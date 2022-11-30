@@ -19,27 +19,31 @@ public class StompErrorHandlerConfig {
 		return new StompSubProtocolErrorHandler() {
 			@Override
 			public Message<byte[]> handleClientMessageProcessingError(Message<byte[]> clientMessage, Throwable ex) {
-				System.out.println("Handle STOMP Error!");
 				StompHeaderAccessor accessor = StompHeaderAccessor.create(StompCommand.ERROR);
-				System.out.println(ex.getCause());
+				
 				if (ex.getCause() instanceof AccessDeniedException || ex.getCause() instanceof ExpiredJwtException )
 				    {
+				
 					accessor.setMessage("403 Access Denied");
 					accessor.setLeaveMutable(true);
 				    return createErrorMessage(accessor, clientMessage.getPayload(), ex, accessor);
+				    
 				    }
+				
 				 return handleClientMessageProcessingError(clientMessage, ex);
 			}
 
 			@Override
 			public Message<byte[]> handleErrorMessageToClient(Message<byte[]> errorMessage) {
-				System.out.println("Handle Error! handleErrorMessageToClient");
 				StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(errorMessage, StompHeaderAccessor.class);
+				
 				if (!accessor.isMutable()) {
 					accessor = StompHeaderAccessor.wrap(errorMessage);
 				}
+				
 				return createErrorMessage(accessor, errorMessage.getPayload(), null, null);
 			}
+			
 			protected Message<byte[]> createErrorMessage(
 					StompHeaderAccessor errorHeaderAccessor, 
 					byte[] errorPayload,
@@ -48,6 +52,7 @@ public class StompErrorHandlerConfig {
 			{
 				return MessageBuilder.createMessage(errorPayload, errorHeaderAccessor.getMessageHeaders());
 			}
+			
 		};
 	}
 

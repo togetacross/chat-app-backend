@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,61 +47,36 @@ public class JwtProvider {
 				.compact();
 	}
 
-	public Authentication getAuthentication(HttpServletRequest request) {
-		Claims claims = extractClaims(request);
 
-		if (claims == null) {
+	public Authentication getAuthentication(String token) {
+		
+		Claims claims = extractClaims(token);
+
+		if (claims == null || claims.getExpiration().before(new Date())) {
 			return null;
 		}
-
+		
 		String email = claims.getSubject();
 		Integer userId = claims.get("userId", Integer.class);
-		String name = claims.get("name").toString();
+		//String name = claims.get("name").toString();
 		Set<GrantedAuthority> authorities = Arrays.stream(claims.get("roles").toString().split(","))
 				.map(SecurityUtils::convertToAuthority).collect(Collectors.toSet());
 
-		//UserDetails userDetails = UserPrinciple.builder().email(email).authorities(authorities).id(userId).build();
 		UserDetails userDetails = UserPrinciple.builder()
-				.username(name)
+				//.username(name)
+				//Changed name to ID for Socket registry
+				.username(userId.toString())
 				.email(email)
 				.authorities(authorities)
 				.id(userId)
 				.build();
 
-		if (email == null) {
-			return null;
-		}
-
 		return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 	}
 	
-	public boolean isValidTokenForSocket(String authHeader) {
-		String token = SecurityUtils.extractAuthTokenFromToken(authHeader);
-		
-		if (token == null) {
-			return false;
-		}
-
-		Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
-
-		Claims claims = Jwts.parserBuilder()
-				.setSigningKey(key)
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
-		if (claims == null) {
-			return false;
-		}
-
-		if (claims.getExpiration().before(new Date())) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public boolean isTokenValid(HttpServletRequest request) {
-		Claims claims = extractClaims(request);
+	
+	public boolean isTokenValid(String token) {
+		Claims claims = extractClaims(token);
 
 		if (claims == null) {
 			return false;
@@ -115,13 +89,12 @@ public class JwtProvider {
 		return true;
 	}
 
-	public Claims extractClaims(HttpServletRequest request) {
-		String token = SecurityUtils.extractAuthTokenFromRequest(request);
+	public Claims extractClaims(String token) {
 		
 		if (token == null) {
 			return null;
 		}
-
+		
 		Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
 
 		return Jwts.parserBuilder()
@@ -130,48 +103,5 @@ public class JwtProvider {
 				.parseClaimsJws(token)
 				.getBody();
 	}
-
-	public Authentication getSocketAuthentication(String authHeader) {
-		String token = SecurityUtils.extractAuthTokenFromToken(authHeader);
-		
-		if (token == null) {
-			return null;
-		}
-		
-		Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
-		
-		Claims claims = Jwts.parserBuilder()
-				.setSigningKey(key)
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
-		
-		if (claims == null) {
-			return null;
-		}
-		
-		if (claims.getExpiration().before(new Date())) {
-			return null;
-		}
-		
-		String email = claims.getSubject();
-		Integer userId = claims.get("userId", Integer.class);
-		String name = claims.get("name").toString();
-		Set<GrantedAuthority> authorities = Arrays.stream(claims.get("roles").toString().split(","))
-				.map(SecurityUtils::convertToAuthority).collect(Collectors.toSet());
-
-		// changed name to id for socket registry
-		UserDetails userDetails = UserPrinciple.builder()
-				.username(userId.toString())
-				.email(email)
-				.authorities(authorities)
-				.id(userId)
-				.build();
-		
-		if (email == null) {
-			return null;
-		}
-		return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-	}
-
+	 
 }

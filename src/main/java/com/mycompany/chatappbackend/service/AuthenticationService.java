@@ -2,13 +2,10 @@ package com.mycompany.chatappbackend.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
-
 import com.mycompany.chatappbackend.security.UserPrinciple;
 import com.mycompany.chatappbackend.security.jwt.JwtProvider;
 import com.mycompany.chatappbackend.security.jwt.JwtResponse;
@@ -33,11 +30,6 @@ public class AuthenticationService {
 		JwtResponse jwtRespone = modelMapper.map(userPrinciple.getUser(), JwtResponse.class);
 		jwtRespone.setToken(jwtProvider.generateToken(userPrinciple));
 		return jwtRespone;
-	}
-	
-	public Authentication getAuthentication(String token) throws AuthenticationException {
-		throw new AuthenticationCredentialsNotFoundException("Password was null or empty.");
-		//return jwtProvider.getSocketAuthentication(token);
 	}
 	
 }

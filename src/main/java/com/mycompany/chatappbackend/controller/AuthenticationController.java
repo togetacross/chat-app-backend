@@ -1,5 +1,7 @@
 package com.mycompany.chatappbackend.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +31,7 @@ public class AuthenticationController {
 	}
 	
 	@PostMapping("/sign-up")
-	public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest) {
+	public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
 		if(userService.findByEmail(signUpRequest.getEmail()).isPresent()) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}

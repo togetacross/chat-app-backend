@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import com.mycompany.chatappbackend.security.SecurityUtils;
 
 public class JwtAuthorizationFilter extends OncePerRequestFilter{
 
@@ -22,14 +23,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		
-		Authentication autchentication = jwtProvider.getAuthentication(request);
-		
-		if(autchentication != null && jwtProvider.isTokenValid(request)) {
-			 SecurityContextHolder.getContext().setAuthentication(autchentication);
+
+		String token = SecurityUtils.extractAuthTokenFromRequest(request);		
+		Authentication autchentication = jwtProvider.getAuthentication(token);				
+
+		if(autchentication != null) {
+			SecurityContextHolder.getContext().setAuthentication(autchentication);				
 		}
 		
-		filterChain.doFilter(request, response);
+		filterChain.doFilter(request, response);	
 	}
 
 

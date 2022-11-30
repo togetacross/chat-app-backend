@@ -17,6 +17,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+import com.mycompany.chatappbackend.security.SecurityUtils;
 import com.mycompany.chatappbackend.security.jwt.JwtProvider;
 
 @Configuration
@@ -34,14 +36,15 @@ public class SocketChannelInterceptor implements WebSocketMessageBrokerConfigure
 			public Message<?> preSend(Message<?> message, MessageChannel channel) {
 				StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 				if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-					List<String> authorization = accessor.getNativeHeader("authorization");
-					String accessToken = authorization.get(0).split(" ")[1];
-					Authentication authentication = jwtProvider.getSocketAuthentication(accessToken);
-				
+					
+					List<String> authorization = accessor.getNativeHeader("authorization");	
+					String authToken = SecurityUtils.extractAuthTokenFromToken(authorization.get(0));
+					Authentication authentication = jwtProvider.getAuthentication(authToken);
+					
 					if(authentication == null) {
-						System.out.println("Not Authenticated");
 						throw new AccessDeniedException("Unauthorized");	
-					} 
+					}
+						
 					accessor.setUser(authentication);
 				}
 				
