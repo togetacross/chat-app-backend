@@ -36,8 +36,6 @@ public class UserProfile {
 	@Column(name = "name", nullable = false)
 	private String name;
 	
-	// hangulat
-	
 	@OneToOne(fetch = FetchType.LAZY)
 	@MapsId
 	@JoinColumn(name = "user_id", referencedColumnName = "id")

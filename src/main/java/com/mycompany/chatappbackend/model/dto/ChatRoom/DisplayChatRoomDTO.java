@@ -15,6 +15,5 @@ public class DisplayChatRoomDTO {
 	private byte[] image;
 	private Object type;
  	private OffsetDateTime createdAt;
- 	//private boolean hasNewMessage;
  	
 }

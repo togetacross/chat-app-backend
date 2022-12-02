@@ -77,6 +77,7 @@ public class ChatController {
 	}
 	
 	
+	@PreAuthorize("@convesrationRoleService.hasRole(#userPrinciple.getId, #chatRoomId, 'USER')")
 	@GetMapping("/load")
 	public ResponseEntity<?> initConversation(
 			@RequestParam(name = "chatRoomId") Integer chatRoomId, 
@@ -90,5 +91,11 @@ public class ChatController {
 	public ResponseEntity<?> getChatRoomsByUserId(@AuthenticationPrincipal UserPrinciple userPrinciple) {
 		return new ResponseEntity<>(chatRoomService.getUserConversations(userPrinciple.getId()), HttpStatus.OK);
 	}
-
+	
+	@GetMapping("/admin/count")
+	public ResponseEntity<?> getAllConversation(@AuthenticationPrincipal UserPrinciple userPrinciple) 
+	{		
+		return new ResponseEntity<>(chatRoomService.loadAllConversationCount(), HttpStatus.OK);
+	}
+	
 }

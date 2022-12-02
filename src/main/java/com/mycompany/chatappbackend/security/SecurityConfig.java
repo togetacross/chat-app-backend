@@ -3,6 +3,8 @@ package com.mycompany.chatappbackend.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -58,6 +61,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
 	}
+	
+	@Bean
+	public RoleHierarchy roleHierarchy() {
+	    RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+	    String hierarchy = "ROLE_ADMIN > ROLE_USER";
+	    roleHierarchy.setHierarchy(hierarchy);
+	    return roleHierarchy;
+	}
+	
+	@Bean
+	public DefaultWebSecurityExpressionHandler overriddenWebSecurityExpressionHandler() {
+	    DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
+	    expressionHandler.setRoleHierarchy(roleHierarchy());
+	    return expressionHandler;
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -66,8 +84,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 					.csrf().disable()
 					.authorizeRequests()
-						.antMatchers("/chatapp/auth/**", "/h2-console/**", "/ws-chat/**") //"/files/**"
+					.expressionHandler(overriddenWebSecurityExpressionHandler())
+						.antMatchers("/chatapp/auth/**", "/h2-console/**", "/ws-chat/**")
 							.permitAll()
+						.antMatchers("/chatapp/conversation/admin/**", "/chatapp/users/admin/**")
+							.hasAuthority("ROLE_ADMIN")
 						.anyRequest()
 							.authenticated()
 				.and()

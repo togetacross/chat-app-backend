@@ -43,6 +43,24 @@ public class UserController {
 		return new ResponseEntity<>(userService.getByNameStartsWith(prefix), HttpStatus.OK);
 	}
 	
+	@GetMapping("/users/admin/count")
+	public ResponseEntity<?> loadUsersByNamePart() 
+	{	
+		return new ResponseEntity<>(userService.getUserCount(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/users/admin/detail")
+	public ResponseEntity<?> loadUsersDetails(@RequestParam(name = "userId") Integer userId) 
+	{	
+		return new ResponseEntity<>(userService.getUserDetails(userId), HttpStatus.OK);
+	}
+	
+	@GetMapping("/users/admin/all")
+	public ResponseEntity<?> loadAllUser() 
+	{	
+		return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
+	}
+	
 	@PutMapping("/users/profile/update")
 	public ResponseEntity<?> updateProfile(
 			@RequestPart(name = "image") MultipartFile multipartFile, 

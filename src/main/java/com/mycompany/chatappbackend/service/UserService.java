@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.chatappbackend.exception.ResourceNotFoundException;
 import com.mycompany.chatappbackend.model.dto.User.UserDTO;
+import com.mycompany.chatappbackend.model.dto.User.UserDetailsDTO;
 import com.mycompany.chatappbackend.model.entity.Role;
 import com.mycompany.chatappbackend.model.entity.User;
 import com.mycompany.chatappbackend.model.entity.UserProfile;
@@ -103,5 +104,17 @@ public class UserService {
 	
 	public User getUserByIdWithProfile(Integer userId) {
 		return userRepository.findByIdWithProfile(userId).get();
+	}
+	
+	public long getUserCount() {
+		return userRepository.count();
+	}
+	
+	public List<UserDTO> getAllUser() {
+		return userRepository.findAllWithProfile();
+	}
+	
+	public UserDetailsDTO getUserDetails(Integer userId) {
+		return userRepository.findByIdWithDetails(userId);
 	}
 }

@@ -96,7 +96,6 @@ public class ChatRoomService {
 		notificationService.sendToUser(user.getId().toString(), new NotificationResponse(chatroomDTO, NotificationType.NEW_CONVERSATION));
 	}
 	
-	
 	@Transactional
 	public void createGroupConversation(MultipartFile file, NewChatRoomDTO chatRoomDTO, int creatorUserId) {
 		byte[] image = fileService.getMultipartFileInByte(file);
@@ -179,6 +178,10 @@ public class ChatRoomService {
 		return new InitConversationDTO(chatroomUsersDto, messageSliceDTO);
 	}
 	
+	public Integer loadAllConversationCount() {
+		return chatRoomRepository.findAll().size();
+	}
+	
 	@Transactional
 	public void processNewMessage(MultipartFile[] files, MessageDTO messageDTO, Integer userId) {
 		DisplayMessageDTO displayMessageDTO = messageService.saveMessage(files, messageDTO, userId);
@@ -186,18 +189,4 @@ public class ChatRoomService {
 		List<Integer> conversationUserIds = chatRoomUserService.loadActiveChatRoomUserIds(messageDTO.getChatRoomId());
 		conversationUserIds.forEach(id -> notificationService.sendToUser(id.toString(), new NotificationResponse(displayMessageDTO, NotificationType.MESSAGE)));
 	}
-
-	/*
-	@Autowired
-	private FileService fileService;
-	
-		byte[] image = null;
-		Resource resource = new ClassPathResource("group.png");
-		try {
-			image = resource.getInputStream().readAllBytes();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	 */
-
 }

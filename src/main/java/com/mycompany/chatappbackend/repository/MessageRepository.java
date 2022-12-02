@@ -31,4 +31,5 @@ public interface MessageRepository extends PagingAndSortingRepository<Message, I
 			+ "WHERE m.id IN :ids "
 			+ "ORDER BY m.createdAt DESC")
 	List<Message> findByIdInOrderByCreatedAtdDesc(@Param("ids") List<Integer> ids);
+	
 }

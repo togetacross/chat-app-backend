@@ -13,12 +13,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-
 import javax.imageio.ImageIO;
+import javax.servlet.ServletContext;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,9 +47,24 @@ public class FileService {
 		return file;
 	}
 	
-	public InputStream getResource(String name, String subPath) throws FileNotFoundException {
-		return new FileInputStream(filesStorage + "/" + subPath + "/" + name);
+	// need fix filename..
+	public InputStream getResource(String name, String subPath) throws FileNotFoundException, UnsupportedEncodingException {
+		String formattedName = name.replaceAll("\\s", "");
+		String encodedImageName = encodeToUrl(formattedName);
+		System.out.println(formattedName);
+		System.out.println(encodedImageName);
+		return new FileInputStream(filesStorage + "/" + subPath + "/" + encodedImageName);
 	}
+	
+	public MediaType getMediaTypeForFileName(ServletContext servletContext, String fileName) {
+	    String mineType = servletContext.getMimeType(fileName);
+	      try {
+	           MediaType mediaType = MediaType.parseMediaType(mineType);
+	           return mediaType;
+	      } catch (Exception e) {
+	           return MediaType.APPLICATION_OCTET_STREAM;
+	      }
+	 }
 	
 	
 	public AttachmentType getFileType(String name) {
