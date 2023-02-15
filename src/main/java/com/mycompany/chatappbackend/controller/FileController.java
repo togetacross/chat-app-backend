@@ -42,8 +42,8 @@ public class FileController {
 		ByteArrayResource resource = new ByteArrayResource(fileInByte);	
 		
 		HttpHeaders headers=new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + fileName + "\"");
-        headers.add("Access-Control-Expose-Headers",HttpHeaders.CONTENT_DISPOSITION + "," + HttpHeaders.CONTENT_LENGTH);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+        headers.add("Access-Control-Expose-Headers", HttpHeaders.CONTENT_DISPOSITION + "," + HttpHeaders.CONTENT_LENGTH);
 		
 		return ResponseEntity.ok()
 	               .headers(headers)

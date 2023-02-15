@@ -32,11 +32,14 @@ import com.mycompany.chatappbackend.model.entity.MessageType;
 import com.mycompany.chatappbackend.model.entity.MessageUserActivity;
 import com.mycompany.chatappbackend.repository.MessageRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class MessageService {
 
 	private static final Integer MESSAGE_PAGE_SIZE = 3;
-	private static final Integer CONSTANT_PAGE = 0;
+	private static final Integer INIT_PAGE = 0;
 	
 	@Value("${files_storage.dir}")
 	private String filesStorage;
@@ -83,17 +86,11 @@ public class MessageService {
 				try {
 					AttachmentType attachmentType = fileService.getFileType(file.getOriginalFilename());
 					String fileName = messageDTO.getDateTime().toInstant().toEpochMilli() + "-" +  file.getOriginalFilename();
-					
-					if(attachmentType.equals(AttachmentType.IMAGE)) {
-						fileService.updloadImage(file, messageDTO.getChatRoomId().toString(), fileName);							
-					} else {
-						fileService.uploadFile(file, messageDTO.getChatRoomId().toString(), fileName);
-					}
-					
+					fileService.updload(file, messageDTO.getChatRoomId().toString(), fileName);		
 					Attachment attachment = new Attachment(attachmentType, fileName);
 					messageContent.addAttachment(attachment);
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.warn(e.getMessage());
 				}
 			});	
 		}	
@@ -103,16 +100,13 @@ public class MessageService {
 	}
 
 	public MessageSliceDTO getPaginateMessages(Integer chatRoomId, OffsetDateTime offsetDateTime) {
-		Pageable paging = PageRequest.of(CONSTANT_PAGE, MESSAGE_PAGE_SIZE);
-		Slice<Integer> ids = messageRepository.findByChatRoomIdByCreatedAtBefore(chatRoomId, offsetDateTime, paging);
-		List<Message> messages = messageRepository.findByIdInOrderByCreatedAtdDesc(ids.toList());
-		List<DisplayMessageDTO> messagesDTO = convertMessageListToMessageDTOList(messages);
-		return new MessageSliceDTO(messagesDTO, ids.hasNext());
-	}
-
-	public MessageSliceDTO getTopMessagesByChatRoomId(Integer chatRoomId) {
-		Pageable paging = PageRequest.of(CONSTANT_PAGE, MESSAGE_PAGE_SIZE);
-		Slice<Integer> ids = messageRepository.findTop10IdByChatRoomIdOrderByCreatedAtDesc(chatRoomId, paging);	
+		Pageable paging = PageRequest.of(INIT_PAGE, MESSAGE_PAGE_SIZE);
+		Slice<Integer> ids;
+		if(offsetDateTime == null) {
+			ids = messageRepository.findTop10IdByChatRoomIdOrderByCreatedAtDesc(chatRoomId, paging);				
+		} else {			
+			ids = messageRepository.findByChatRoomIdByCreatedAtBefore(chatRoomId, offsetDateTime, paging);
+		}
 		List<Message> messages = messageRepository.findByIdInOrderByCreatedAtdDesc(ids.toList());
 		List<DisplayMessageDTO> messagesDTO = convertMessageListToMessageDTOList(messages);
 		return new MessageSliceDTO(messagesDTO, ids.hasNext());
@@ -120,11 +114,8 @@ public class MessageService {
 
 	private List<DisplayMessageDTO> convertMessageListToMessageDTOList(List<Message> messageList) {
 		return messageList.stream()
-			.map(message -> {
-					return createDisplayMessageDTO(message);
-				}
-			)
-			.sorted(Comparator.comparing(DisplayMessageDTO::getCreatedAt)) // need fix change repo desc?
+			.map(message -> createDisplayMessageDTO(message))
+			.sorted(Comparator.comparing(DisplayMessageDTO::getCreatedAt))
 			.collect(Collectors.toList());
 	}
 	
@@ -138,25 +129,19 @@ public class MessageService {
 				.content(message.getMessageContent() != null ? message.getMessageContent().getContent() : "")
 				.files(message.getMessageContent() != null ? message.getMessageContent().getAttachments() 
 						.stream()
-						.map(attachment -> {
-							if(attachment.getAttachmentType().equals(AttachmentType.IMAGE)) {		
-								byte[] file = null;
-								try {
-									file = fileService.getFileInByteArray(attachment.getName(), message.getChatRoomUser().getKey().getChatRoomId().toString());
-								} catch (IOException e) {
-									System.out.println(e.getMessage());
-								}		 
-								return new AttachmentDTO(attachment.getId(), attachment.getName(), file, attachment.getAttachmentType());
-							} else {
-								return new AttachmentDTO(attachment.getId(), attachment.getName(), null, attachment.getAttachmentType());
-							}
+						 .map(attachment -> {
+							byte[] file = null;
+							if(attachment.getAttachmentType().equals(AttachmentType.IMAGE)) {			
+								file = fileService.getFileInByteArray(attachment.getName(), message.getChatRoomUser().getKey().getChatRoomId().toString());
+							} 
+							return new AttachmentDTO(attachment.getId(), attachment.getName(), file, attachment.getAttachmentType());
 						})
 						.collect(Collectors.toSet()) : new ArrayList<>())
-				.userActivitys(message.getMessageUserActivitys() != null ? message.getMessageUserActivitys() 
+				.userActivitys(message.getMessageUserActivitys() != null ? message.getMessageUserActivitys()
 						.stream()
-						.map(activity -> {
-							return new MessageUserActivityDTO(activity.getUser().getId(), activity.getSeenAt(), activity.isLiked());
-						})
+							.map(activity -> {
+								return new MessageUserActivityDTO(activity.getUser().getId(), activity.getSeenAt(), activity.isLiked());
+							})
 						.collect(Collectors.toSet()) : new HashSet<>())
 				.build();
 	}

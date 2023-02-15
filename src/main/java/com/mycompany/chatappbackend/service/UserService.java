@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.mycompany.chatappbackend.exception.ResourceNotFoundException;
 import com.mycompany.chatappbackend.model.dto.User.UserDTO;
 import com.mycompany.chatappbackend.model.dto.User.UserDetailsDTO;
@@ -104,6 +103,10 @@ public class UserService {
 	
 	public User getUserByIdWithProfile(Integer userId) {
 		return userRepository.findByIdWithProfile(userId).get();
+	}
+	
+	public byte[] getUserImage(Integer userId) {
+		return userRepository.findProfileImageById(userId);
 	}
 	
 	public long getUserCount() {

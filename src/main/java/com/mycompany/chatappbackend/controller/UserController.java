@@ -61,6 +61,12 @@ public class UserController {
 		return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
 	}
 	
+	@GetMapping("/users/profile")
+	public ResponseEntity<?> loadUserProfile(@AuthenticationPrincipal UserPrinciple userPrinciple) 
+	{	
+		return new ResponseEntity<>(userService.getUserImage(userPrinciple.getId()), HttpStatus.OK);
+	}
+	
 	@PutMapping("/users/profile/update")
 	public ResponseEntity<?> updateProfile(
 			@RequestPart(name = "image") MultipartFile multipartFile, 

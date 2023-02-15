@@ -72,6 +72,7 @@ public class ChatRoomService {
 				.orElseThrow(()-> new ResourceNotFoundException("Conversation not found!"));
 		
 		User user = userService.getUserByIdWithProfile(userId);
+		
 		ChatRoomUser chatroomUser = chatRoomUserService.newChatRoomUser(user, chatRoom);
 		DisplayMessageDTO displayMessageDTO = messageService.saveUserActivityMessage(userId, roomId, MessageType.JOIN);
 		
@@ -140,7 +141,7 @@ public class ChatRoomService {
 		
 		List<User> users = userService.getUsersWhereIdInWithProfile(List.of(senderUserId, receiverUserId));
 		chatroom.addConversationProfile(new PrivateConversationProfile(users.get(0).getUserProfile(), users.get(1)));
-		chatroom.addConversationProfile(new PrivateConversationProfile(users.get(1).getUserProfile(), users.get(0)));
+		chatroom.addConversationProfile(new PrivateConversationProfile(users.get(1).getUserProfile(), users.get(0)));	
 		users.forEach(user -> {
 			ChatRoomUser chatroomUser = new ChatRoomUser(user, ChatRoomUserRole.ADMIN);
 			if(user.getId() == senderUserId) { 
@@ -148,6 +149,7 @@ public class ChatRoomService {
 			}
 			chatroom.addChatRoomUser(chatroomUser);
 		});
+		
 		ChatRoom savedChatRoom = chatRoomRepository.save(chatroom);
 		
 		savedChatRoom.getConversationProfile().forEach(profile-> {
@@ -167,14 +169,14 @@ public class ChatRoomService {
 	public List<DisplayChatRoomDTO> getUserConversations(int userId) throws ResourceNotFoundException {	
 		List<DisplayChatRoomDTO> conversations = chatRoomRepository.findByUserId(userId);
 		if(conversations.isEmpty()) {
-			throw new ResourceNotFoundException("No conversations found!");
+			throw new ResourceNotFoundException("Conversations not found!");
 		}
 		return conversations;
 	}
 	
 	public InitConversationDTO initConversation(Integer chatRoomId) {
 		List<ChatRoomUserDTO> chatroomUsersDto = chatRoomUserService.loadChatRoomUsersById(chatRoomId);
-		MessageSliceDTO messageSliceDTO = messageService.getTopMessagesByChatRoomId(chatRoomId);
+		MessageSliceDTO messageSliceDTO = messageService.getPaginateMessages(chatRoomId, null);
 		return new InitConversationDTO(chatroomUsersDto, messageSliceDTO);
 	}
 	
@@ -186,7 +188,6 @@ public class ChatRoomService {
 	public void processNewMessage(MultipartFile[] files, MessageDTO messageDTO, Integer userId) {
 		DisplayMessageDTO displayMessageDTO = messageService.saveMessage(files, messageDTO, userId);
 		chatRoomRepository.updateChatRoomLastActivity(messageDTO.getDateTime(), messageDTO.getChatRoomId());
-		List<Integer> conversationUserIds = chatRoomUserService.loadActiveChatRoomUserIds(messageDTO.getChatRoomId());
-		conversationUserIds.forEach(id -> notificationService.sendToUser(id.toString(), new NotificationResponse(displayMessageDTO, NotificationType.MESSAGE)));
+		notificationService.sendToTopic(messageDTO.getChatRoomId(), new NotificationResponse(displayMessageDTO, NotificationType.MESSAGE));				
 	}
 }

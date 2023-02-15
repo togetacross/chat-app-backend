@@ -28,6 +28,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	
 	@Query("select u from User u LEFT JOIN FETCH u.userProfile up where u.id = :userId" )
 	Optional<User> findByIdWithProfile(@Param("userId") Integer userId);
+	
+	@Query("SELECT up.image "
+			+ "FROM User u "
+			+ "LEFT JOIN u.userProfile up "
+			+ "WHERE u.id = :userId")
+	byte[] findProfileImageById(@Param("userId") Integer userId);
 
 	@Query("SELECT new com.mycompany.chatappbackend.model.dto.User.UserDTO(u.id, u.name, up.image) "
 			+ "FROM User u "

@@ -3,6 +3,7 @@ package com.mycompany.chatappbackend.security.websocket;
 import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
@@ -36,6 +37,10 @@ public class SocketEventListener {
     private Integer getAuthUserId(Principal principal) {
     	Authentication auth = (Authentication) principal;
         UserPrinciple userPrinciple = (UserPrinciple) auth.getPrincipal();
+        Integer userId = userPrinciple.getId();
+        if(userId == null) {
+        	throw new AccessDeniedException("Unauthorized");
+        }
         return userPrinciple.getId();
     }
     

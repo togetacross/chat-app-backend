@@ -31,9 +31,10 @@ import com.mycompany.chatappbackend.service.UserService;
 
 //@Configuration
 public class InitDb implements CommandLineRunner {
-/*
+	
 	@Autowired
 	private UserRepository userRepository;
+	/*
 
 	@Autowired
 	private ChatRoomService chatRoomService;
@@ -41,13 +42,15 @@ public class InitDb implements CommandLineRunner {
 	@Autowired
 	private MessageService messageService;
 
+	 */
 	@Autowired
-	private PasswordEncoder passwordEncoder;*/
+	private PasswordEncoder passwordEncoder;
 
 	// @Transactional
 	@Override
 	public void run(String... args) throws Exception {
-	/*	initUsers();
+		//initUsers();
+		/*	
 		initConversations();
 		initMessages(1, new Integer[] { 1, 2, 3, 5, 6 }, "GROUP");
 		initMessages(2, new Integer[] { 1, 2, 3, 5, 6 }, "GROUP");
@@ -55,7 +58,7 @@ public class InitDb implements CommandLineRunner {
 		initMessages(12, new Integer[] { 1, 2 }, "GROUP");
 		initMessages(13, new Integer[] { 1, 3}, "GROUP");*/
 	}
-/*
+	
 	public void addUser(SignUpRequest signUpRequest, byte[] image) {
 		User newUser = new User();
 		newUser.setName(signUpRequest.getName());
@@ -71,8 +74,11 @@ public class InitDb implements CommandLineRunner {
 
 	private void initUsers() {
 		List<SignUpRequest> userList = Arrays.asList(
-				new SignUpRequest("Rio", "asd@asd.hu", "1234"),
-				new SignUpRequest("Tibi", "lionhearttibor@gmail.com", "1234"),
+				new SignUpRequest("John Doo", "test1@test.com", "1234"),
+				new SignUpRequest("Rio Amilo", "test2@test.com", "1234"),
+				new SignUpRequest("Rio Armando", "test3@test.com", "1234"),
+				new SignUpRequest("Rio Alehandro", "test4@test.com", "1234")
+				/*new SignUpRequest("Tibi", "lionhearttibor@gmail.com", "1234"),
 				new SignUpRequest("Tio", "asd@asd11.hu", "1234"),
 				new SignUpRequest("Tiadora", "asd@asd23.hu", "1234"),
 				new SignUpRequest("Tikituki", "asd@asd44.hu", "1234"),
@@ -82,7 +88,7 @@ public class InitDb implements CommandLineRunner {
 				new SignUpRequest("Riokokoa", "asd@asd3.hu", "1234"),
 				new SignUpRequest("RioLulu", "asd@asd4.hu", "1234"),
 				new SignUpRequest("Riopula", "asd@asd5.hu", "1234"),
-				new SignUpRequest("Riosadd", "asd@asd6.hu", "1234")
+				new SignUpRequest("Riosadd", "asd@asd6.hu", "1234")*/
 				);
 	
 		userList.forEach(u -> addUser(u, generateProfileImage()));
@@ -108,7 +114,7 @@ public class InitDb implements CommandLineRunner {
 		List<Integer> private_1 = Arrays.asList(new Integer[] { 1, 2 });
 		List<Integer> private_2 = Arrays.asList(new Integer[] { 1, 3 });
 
-		List<NewChatRoomDTO> conversationList = Arrays.asList(
+		/*List<NewChatRoomDTO> conversationList = Arrays.asList(
 				new NewChatRoomDTO("A-Team", userIds_1, "GROUP"),
 				new NewChatRoomDTO("B-Team", userIds_2, "GROUP"), 
 				new NewChatRoomDTO("Team All", userIds_3, "GROUP"),
@@ -123,9 +129,9 @@ public class InitDb implements CommandLineRunner {
 				new NewChatRoomDTO(null, private_1, "PRIVATE"), 
 				new NewChatRoomDTO(null, private_2, "PRIVATE"));
 
-		conversationList.forEach(conversation -> chatRoomService.createChatRoom(null, conversation, 1));
+		conversationList.forEach(conversation -> chatRoomService.createChatRoom(null, conversation, 1));*/
 	}
-
+/*
 	private void initMessages(Integer roomId, Integer [] userIds, String type) {
 
 		String[] words = new String[] { "Hey", "Hy", "How are you?", "Fine thanks and you?", "What's this?", "Why not?",
@@ -141,7 +147,7 @@ public class InitDb implements CommandLineRunner {
 							generateMessageText(words)));
 		}
 	}
-
+*/
 	private String generateMessageText(String[] arr) {
 		return arr[new Random().nextInt(arr.length)];
 	}
@@ -150,5 +156,4 @@ public class InitDb implements CommandLineRunner {
 		return arr[new Random().nextInt(arr.length)];
 	}
 
- */
 }
