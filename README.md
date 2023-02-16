@@ -15,10 +15,10 @@ Hobby project for practise. :book:
 
 ## Features
 - Role and permission based JWT auth for Socket chanels and REST
-- User can create private and group chanels & (add/leave/delete)
-- Notify users and chanels about user activitations
+- User can create private and group conversations & (add/leave/delete)
+- Notify users and/or chanels about user activitations:
   new conversation | message | type | like | join - leave users
-- Convesrations details - messages - file paths stored in db | files in storage
+- Convesrations details - messages - file indexes stored in db | files in storage
 - Auto resize images
 - Custom group conversation profiles (name/image)
 
