@@ -53,6 +53,10 @@ public class ChatRoomUser {
 		this.role = role;
 	}
 	
+	public ChatRoomUser(Integer userId, Integer chatRoomId) {
+		this.key = new ChatRoomUserPK(userId, chatRoomId);
+	}
+	
 	public ChatRoomUser(User user, ChatRoom chatRoom) {
 		this.user = user;
 		this.chatRoom = chatRoom;

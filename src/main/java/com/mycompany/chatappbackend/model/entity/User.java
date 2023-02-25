@@ -54,9 +54,6 @@ public class User {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
-
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<ConversationProfile> conversationsProfile = new HashSet<>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<MessageUserActivity> messageUserActivities = new HashSet<>();

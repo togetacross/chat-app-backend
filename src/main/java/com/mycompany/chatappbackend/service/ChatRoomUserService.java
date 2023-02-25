@@ -29,6 +29,10 @@ public class ChatRoomUserService {
 	public Optional<ChatRoomUser> getChatRoomUserById(Integer userId, Integer chatRoomId) {
 		return chatRoomUserRepository.findById(new ChatRoomUserPK(userId, chatRoomId));
 	}
+	
+	public ChatRoomUserDTO getChatRoomUserByIdWithProfile(Integer userId, Integer chatRoomId) {
+		return chatRoomUserRepository.findByIdWithProfile(chatRoomId, userId);
+	}
 
 	public List<Integer> loadActiveChatRoomUserIds(Integer roomId) {
 		return chatRoomUserRepository.getActiveUserIdsByChatRoomId(roomId);

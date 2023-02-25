@@ -19,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +37,7 @@ public class Message {
 	private Integer id;
 
 	@Column(name = "created_at")
+	@CreationTimestamp
 	private OffsetDateTime createdAt;
 	
 	@Enumerated(EnumType.STRING)
@@ -56,14 +59,12 @@ public class Message {
 	@OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private final Set<MessageUserActivity> messageUserActivitys = new HashSet<>();
 
-	public Message(MessageType type, OffsetDateTime createdAt) {
+	public Message(MessageType type) {
 		this.messageType = type;
-		this.createdAt = createdAt;
 	}
 	
-	public Message(MessageType type, OffsetDateTime createdAt, ChatRoomUser chatRoomUser) {
+	public Message(MessageType type, ChatRoomUser chatRoomUser) {
 		this.messageType = type;
-		this.createdAt = createdAt;
 		this.chatRoomUser = chatRoomUser;
 	}
 	

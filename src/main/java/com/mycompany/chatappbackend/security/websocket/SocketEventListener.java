@@ -37,8 +37,7 @@ public class SocketEventListener {
     private Integer getAuthUserId(Principal principal) {
     	Authentication auth = (Authentication) principal;
         UserPrinciple userPrinciple = (UserPrinciple) auth.getPrincipal();
-        Integer userId = userPrinciple.getId();
-        if(userId == null) {
+        if(userPrinciple.getId() == null) {
         	throw new AccessDeniedException("Unauthorized");
         }
         return userPrinciple.getId();

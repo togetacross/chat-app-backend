@@ -15,8 +15,8 @@ public class NotificationService {
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
 	
-	public void sendToUser(String userName, NotificationResponse response) {
-		messagingTemplate.convertAndSendToUser(userName, PRIVATE_CHANEL, response);;
+	public void sendToUser(String id, NotificationResponse response) {
+		messagingTemplate.convertAndSendToUser(id, PRIVATE_CHANEL, response);;
 	}
 	
 	public void sendToAll(NotificationResponse response) {

@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MessageService {
 
-	private static final Integer MESSAGE_PAGE_SIZE = 3;
+	private static final Integer MESSAGE_PAGE_SIZE = 4;
 	private static final Integer INIT_PAGE = 0;
 	
 	@Value("${files_storage.dir}")
@@ -63,13 +62,13 @@ public class MessageService {
 	
 	public DisplayMessageDTO saveUserActivityMessage(Integer userId, Integer chatroomId, MessageType messageType) {
 		ChatRoomUser chatroomUser = chatRoomUserService.getReferenceById(userId, chatroomId);
-		Message message = new Message(messageType, OffsetDateTime.now(ZoneId.systemDefault()), chatroomUser);
+		Message message = new Message(messageType, chatroomUser);
 		message.addUserActivity(new MessageUserActivity(chatroomUser.getUser(), OffsetDateTime.now(ZoneId.systemDefault())));
 		Message savedMessage = messageRepository.save(message);
 		return createDisplayMessageDTO(savedMessage);
 	}
 	
-	@Transactional
+	//@Transactional
 	public DisplayMessageDTO saveMessage(MultipartFile[] files, MessageDTO messageDTO, Integer userId) {
 		ChatRoomUser chatRoomUser = chatRoomUserService.getChatRoomUserById(userId, messageDTO.getChatRoomId()).orElseThrow();
 		Message message = new Message();

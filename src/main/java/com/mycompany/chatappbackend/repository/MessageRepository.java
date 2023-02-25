@@ -32,4 +32,13 @@ public interface MessageRepository extends PagingAndSortingRepository<Message, I
 			+ "ORDER BY m.createdAt DESC")
 	List<Message> findByIdInOrderByCreatedAtdDesc(@Param("ids") List<Integer> ids);
 	
+	@Query("SELECT m FROM Message m "
+			+ "LEFT JOIN m.chatRoomUser cu "
+			+ "LEFT JOIN cu.chatRoom c "
+			+ "LEFT JOIN c.conversationProfile p "			
+			+ "LEFT JOIN cu.user u "
+			+ "LEFT JOIN u.userProfile up "
+			+ "WHERE m.id = :id")
+	Message findByIdWithChatRoomAndUser(@Param("id") Integer id);
+	
 }

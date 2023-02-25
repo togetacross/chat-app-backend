@@ -19,6 +19,12 @@
 		<java.version>11</java.version>
 	</properties>
 	<dependencies>
+		<!-- 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+		 -->
 		<dependency>
 			<groupId>org.imgscalr</groupId>
 			<artifactId>imgscalr-lib</artifactId>
@@ -129,7 +135,7 @@
 		<!-- <dependency> <groupId>org.springframework.security</groupId> <artifactId>spring-security-test</artifactId> 
 			<scope>test</scope> </dependency> -->
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>dev</id>

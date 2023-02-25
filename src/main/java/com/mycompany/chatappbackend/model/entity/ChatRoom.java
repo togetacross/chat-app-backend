@@ -13,7 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import org.hibernate.annotations.CreationTimestamp;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,18 +35,16 @@ public class ChatRoom {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "created_at")
+	@CreationTimestamp
 	private OffsetDateTime createdAt;
 	
 	@Column(name = "type")
 	@Enumerated(EnumType.STRING)
 	private ChatRoomType type;
 	
-	@OneToMany(mappedBy = "chatroom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<ConversationProfile> conversationProfile = new HashSet<>();
+	@OneToOne(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private ConversationProfile conversationProfile;
 
 	@OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
@@ -52,10 +52,10 @@ public class ChatRoom {
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Set<Message> messages = new HashSet<>();
 
-	public ChatRoom (ChatRoomType type, OffsetDateTime createdAt) {
-		super();
+	public ChatRoom (ChatRoomType type, ConversationProfile conversationProfile) {
 		this.type = type;
-		this.createdAt = createdAt;
+		conversationProfile.setChatRoom(this);
+		this.setConversationProfile(conversationProfile);
 	}
 	
 	public void addMessage(Message message, ChatRoomUser chatRoomUser) {
@@ -63,11 +63,6 @@ public class ChatRoom {
 		message.setChatRoomUser(chatRoomUser);
 	}
 
-	public void addConversationProfile(ConversationProfile conversationProfile) {
-		this.conversationProfile.add(conversationProfile);
-		conversationProfile.setChatroom(this);
-	}
-	
 	public void addChatRoomUser(ChatRoomUser chatRoomUser) {
 		this.chatRoomUsers.add(chatRoomUser);
 		chatRoomUser.setChatRoom(this);;
@@ -78,10 +73,3 @@ public class ChatRoom {
 	}
 
 }
-
-/*
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "chatroom_users", joinColumns = {
-			@JoinColumn(name = "chatroom_id") }, inverseJoinColumns = {@JoinColumn(name="user_id")})
-	private Set<User> users = new HashSet<>();
- */

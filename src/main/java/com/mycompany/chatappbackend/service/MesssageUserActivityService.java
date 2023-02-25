@@ -56,8 +56,8 @@ public class MesssageUserActivityService {
 						new MessageSeenResponseDTO(
 								messageSeenDTO.getMessageIds(),
 								userId, 
-								OffsetDateTime.now(ZoneId.systemDefault()
-						)), 
+								seenAt
+						), 
 						NotificationType.SEEN)
 		);		
 	}
